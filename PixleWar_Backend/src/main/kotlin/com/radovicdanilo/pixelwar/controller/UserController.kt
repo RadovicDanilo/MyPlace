@@ -7,10 +7,8 @@ import com.radovicdanilo.pixelwar.security.CheckSecurity
 import com.radovicdanilo.pixelwar.service.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
+import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/user")
@@ -29,20 +27,27 @@ class UserController(
 
     @PostMapping("/login")
     fun login(@RequestBody tokenRequestDto: TokenRequestDto): ResponseEntity<TokenResponseDto> {
-        return userService.login(tokenRequestDto)?.let {
-            ResponseEntity.ok(it)
-        } ?: ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        return try {
+            val user = userService.login(tokenRequestDto)
+            ResponseEntity.ok(user)
+        } catch (_: Exception) {
+            ResponseEntity.status(HttpStatus.UNAUTHORIZED).build()
+        }
     }
 
     @CheckSecurity
     @PostMapping("/pfp")
-    fun addPfp() {
-
+    fun addPfp(
+        @RequestParam("file") file: MultipartFile, @RequestHeader("Authorization") authHeader: String
+    ): ResponseEntity<Void> {
+        val result = userService.saveProfilePicture(file, authHeader)
+        return if (result) ResponseEntity.ok().build() else ResponseEntity.badRequest().build()
     }
 
-    @PostMapping("/pfp/{id}")
-    fun getPfp() {
-
+    @GetMapping("/pfp/{id}")
+    fun getPfp(@PathVariable id: Long): ResponseEntity<ByteArray> {
+        val image = userService.loadProfilePicture(id)
+        return image ?: ResponseEntity.notFound().build()
     }
 }
 
