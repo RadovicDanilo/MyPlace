@@ -1,5 +1,5 @@
 package com.radovicdanilo.pixelwar.dto.token
 
-class TokenRequestDto(
+data class TokenRequestDto(
     val username: String, val password: String
 )

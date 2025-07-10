@@ -1,5 +1,5 @@
 package com.radovicdanilo.pixelwar.dto.create
 
-abstract class CreateUserDto(
+data class CreateUserDto(
     val username: String, val password: String
 )

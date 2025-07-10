@@ -1,5 +1,5 @@
 package com.radovicdanilo.pixelwar.dto.token
 
-class TokenResponseDto(
+data class TokenResponseDto(
     val token: String
 )
