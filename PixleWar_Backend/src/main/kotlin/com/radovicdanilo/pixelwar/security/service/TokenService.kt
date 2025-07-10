@@ -3,7 +3,6 @@ package com.radovicdanilo.pixelwar.security.service
 import io.jsonwebtoken.Claims
 import org.springframework.stereotype.Service
 
-@Service
 interface TokenService {
     fun generate(claims: Claims): String
 
