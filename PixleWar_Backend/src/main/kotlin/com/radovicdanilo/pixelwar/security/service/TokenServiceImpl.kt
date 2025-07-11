@@ -26,7 +26,7 @@ class TokenServiceImpl(
     }
 
     override fun parseToken(token: String): Claims {
-        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token).body
+        return Jwts.parserBuilder().setSigningKey(secretKey).build().parseClaimsJws(token.removePrefix("Bearer ")).body
     }
 
     override fun getId(token: String): Long {

@@ -41,6 +41,7 @@ class UserServiceImpl(
         }
 
         val token = tokenService.generate(claims)
+
         return TokenResponseDto(token)
     }
 
@@ -77,7 +78,9 @@ class UserServiceImpl(
             else -> "jpg"
         }
 
-        val directory = File("uploads/profile-pictures").apply { mkdirs() }
+        val directory = File(System.getProperty("user.dir"), "uploads/profile-pictures")
+        if (!directory.exists()) directory.mkdirs()
+
         val targetFile = File(directory, "$userId.$ext")
         file.transferTo(targetFile)
 
