@@ -5,6 +5,7 @@ import com.radovicdanilo.pixelwar.dto.token.TokenRequestDto
 import com.radovicdanilo.pixelwar.dto.token.TokenResponseDto
 import com.radovicdanilo.pixelwar.security.CheckSecurity
 import com.radovicdanilo.pixelwar.service.UserService
+import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -17,7 +18,7 @@ class UserController(
 ) {
 
     @PostMapping("/register")
-    fun registerClient(@RequestBody createUserDto: CreateUserDto): ResponseEntity<Void> {
+    fun registerClient(@Valid @RequestBody createUserDto: CreateUserDto): ResponseEntity<Void> {
         return if (userService.register(createUserDto)) {
             ResponseEntity.ok().build()
         } else {
@@ -26,7 +27,7 @@ class UserController(
     }
 
     @PostMapping("/login")
-    fun login(@RequestBody tokenRequestDto: TokenRequestDto): ResponseEntity<TokenResponseDto> {
+    fun login(@Valid @RequestBody tokenRequestDto: TokenRequestDto): ResponseEntity<TokenResponseDto> {
         return try {
             val user = userService.login(tokenRequestDto)
             ResponseEntity.ok(user)
