@@ -9,20 +9,23 @@ class CanvasService(
     private val redisTemplate: RedisTemplate<String, ByteArray>
 ) {
     private val canvasKey = "canvas:bitfield"
+    private val width = 1024
+    private val height = 1024
+    private val bitsPerPixel = 4
 
     fun getFullCanvas(): ByteArray {
-        return redisTemplate.opsForValue().get(canvasKey) ?: ByteArray(524_288) { 0 }
+        return redisTemplate.opsForValue().get(canvasKey) ?: ByteArray(width * height * bitsPerPixel / 8) { 0 }
     }
 
     fun setPixel(x: Int, y: Int, color: Int) {
-        val offset = x + y * 1024L
+        val offset = (y * width + x) * bitsPerPixel
 
         redisTemplate.execute { conn ->
             val keyBytes = redisTemplate.stringSerializer.serialize(canvasKey)!!
-            val bitfieldArgs =
-                BitFieldSubCommands.create().set(BitFieldSubCommands.BitFieldType.unsigned(4)).valueAt(offset)
-                    .to(color.toLong())
-            conn.stringCommands().bitField(keyBytes, bitfieldArgs)
+            val cmd = BitFieldSubCommands.create().set(BitFieldSubCommands.BitFieldType.unsigned(bitsPerPixel))
+                .valueAt(offset.toLong()).to(color.toLong())
+            conn.stringCommands().bitField(keyBytes, cmd)
         }
     }
+
 }

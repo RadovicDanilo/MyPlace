@@ -32,9 +32,9 @@ class PixelWebSocketHandler(
             val y = payload["y"].asInt()
             val color = payload["color"].asInt()
 
-            if (x > 1023 || y > 1023 || color > 15 || x < 0 || y < 0 || color < 0) {
-                throw IllegalArgumentException("Invalid value")
-            }
+            require(x in 0 until 1024) { "x coordinate out of bounds" }
+            require(y in 0 until 1024) { "y coordinate out of bounds" }
+            require(color in 0..15) { "color must be 4-bit (0-15)" }
 
             canvasService.setPixel(x, y, color)
 
