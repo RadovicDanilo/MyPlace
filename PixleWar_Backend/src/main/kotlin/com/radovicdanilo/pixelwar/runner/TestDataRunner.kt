@@ -1,16 +1,15 @@
 package com.radovicdanilo.pixelwar.runner
 
 import org.springframework.boot.CommandLineRunner
-import org.springframework.data.redis.core.StringRedisTemplate
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
 
 @Component
 class TestDataRunner(
-    private val redisTemplate: StringRedisTemplate
+    private val redisTemplate: RedisTemplate<String, ByteArray>
 ) : CommandLineRunner {
 
     override fun run(vararg args: String?) {
-        println("INITIALIZING CANVAS ")
         val canvasKey = "canvas:bitfield"
 
         if (redisTemplate.hasKey(canvasKey)) return
@@ -18,6 +17,6 @@ class TestDataRunner(
         // 1024 * 1024 * 4 bits = 524_288 Bytes
         val emptyCanvas = ByteArray(524_288) { 0 }
 
-        redisTemplate.opsForValue().set(canvasKey, String(emptyCanvas, Charsets.ISO_8859_1))
+        redisTemplate.opsForValue().set(canvasKey, emptyCanvas)
     }
 }

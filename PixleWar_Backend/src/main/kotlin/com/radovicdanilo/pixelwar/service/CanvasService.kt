@@ -1,24 +1,28 @@
 package com.radovicdanilo.pixelwar.service
 
-import com.radovicdanilo.pixelwar.dto.pixel.PaintReq
-import org.springframework.data.redis.core.StringRedisTemplate
+import org.springframework.data.redis.connection.BitFieldSubCommands
+import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Service
 
 @Service
 class CanvasService(
-    private val redisTemplate: StringRedisTemplate
+    private val redisTemplate: RedisTemplate<String, ByteArray>
 ) {
     private val canvasKey = "canvas:bitfield"
 
-    fun getFullCanvas(): String {
-        return redisTemplate.opsForValue().get(canvasKey).toString()
+    fun getFullCanvas(): ByteArray {
+        return redisTemplate.opsForValue().get(canvasKey) ?: ByteArray(524_288) { 0 }
     }
 
-    fun setPixel(paintReq: PaintReq) {
-        val x = paintReq.x
-        val y = paintReq.y
-        val offset = x + y * 1024
+    fun setPixel(x: Int, y: Int, color: Int) {
+        val offset = x + y * 1024L
 
-        val color = paintReq.color
+        redisTemplate.execute { conn ->
+            val keyBytes = redisTemplate.stringSerializer.serialize(canvasKey)!!
+            val bitfieldArgs =
+                BitFieldSubCommands.create().set(BitFieldSubCommands.BitFieldType.unsigned(4)).valueAt(offset)
+                    .to(color.toLong())
+            conn.stringCommands().bitField(keyBytes, bitfieldArgs)
+        }
     }
 }
