@@ -12,7 +12,7 @@ class SecurityConfiguration {
     @Bean
     fun securityFilterChain(http: HttpSecurity): SecurityFilterChain {
         http.csrf { it.disable() }.authorizeHttpRequests {
-            it.requestMatchers("/user/**").permitAll()
+            it.requestMatchers("/**").permitAll()
             it.anyRequest().permitAll()
         }.sessionManagement {
             it.sessionCreationPolicy(SessionCreationPolicy.STATELESS)

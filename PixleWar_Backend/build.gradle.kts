@@ -33,10 +33,13 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
 
     // JPA / Validation
-    runtimeOnly("org.postgresql:postgresql")
-    runtimeOnly("com.h2database:h2")
     implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
     implementation("jakarta.validation:jakarta.validation-api:3.1.1")
+
+    // DB
+    runtimeOnly("org.postgresql:postgresql")
+    runtimeOnly("com.h2database:h2")
+    implementation("org.springframework.boot:spring-boot-starter-data-redis")
 
     // JWT
     implementation("io.jsonwebtoken:jjwt-api:0.11.5")
