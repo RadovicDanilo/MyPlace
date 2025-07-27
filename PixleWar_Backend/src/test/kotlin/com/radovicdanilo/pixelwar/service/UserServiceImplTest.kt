@@ -4,7 +4,7 @@ import com.radovicdanilo.pixelwar.domain.User
 import com.radovicdanilo.pixelwar.dto.create.CreateUserDto
 import com.radovicdanilo.pixelwar.dto.token.TokenRequestDto
 import com.radovicdanilo.pixelwar.repository.UserRepository
-import com.radovicdanilo.pixelwar.security.service.TokenService
+import com.radovicdanilo.pixelwar.config.security.service.TokenService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any

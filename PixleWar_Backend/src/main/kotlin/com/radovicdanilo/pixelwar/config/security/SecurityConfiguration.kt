@@ -1,4 +1,4 @@
-package com.radovicdanilo.pixelwar.security
+package com.radovicdanilo.pixelwar.config.security
 
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

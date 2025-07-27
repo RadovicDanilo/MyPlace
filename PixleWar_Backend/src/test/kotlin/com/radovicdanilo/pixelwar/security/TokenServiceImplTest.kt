@@ -1,6 +1,7 @@
 package com.radovicdanilo.pixelwar.security
 
-import com.radovicdanilo.pixelwar.security.service.TokenServiceImpl
+import com.radovicdanilo.pixelwar.config.security.Roles
+import com.radovicdanilo.pixelwar.config.security.service.TokenServiceImpl
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import org.junit.jupiter.api.Assertions.*
@@ -22,7 +23,7 @@ class TokenServiceImplTest {
 
     fun defaultClaims(): Claims = Jwts.claims().setSubject("username").setIssuedAt(Date()).apply {
         this["role"] = Roles.USER
-        this["id"] = 1L
+        this["userId"] = 1L
     }
 
     @Test
@@ -35,7 +36,7 @@ class TokenServiceImplTest {
 
         val parsedClaims = tokenService.parseToken(token)
         assertEquals("username", parsedClaims.subject)
-        assertEquals(1L, (parsedClaims["id"] as Number).toLong())
+        assertEquals(1L, (parsedClaims["userId"] as Number).toLong())
     }
 
     @Test
@@ -52,14 +53,14 @@ class TokenServiceImplTest {
     fun `getId should convert id from different types`() {
         // Test with Int
         val claimsInt: Claims = defaultClaims()
-        claimsInt["id"] = 99
+        claimsInt["userId"] = 99
         claimsInt.subject = "subjectInt"
         val tokenInt = tokenService.generate(claimsInt)
         assertEquals(99L, tokenService.getId(tokenInt))
 
         // Test with String
         val claimsString: Claims = defaultClaims()
-        claimsString["id"] = "12345"
+        claimsString["userId"] = "12345"
         claimsString.subject = "subjectString"
         val tokenString = tokenService.generate(claimsString)
         assertEquals(12345L, tokenService.getId(tokenString))

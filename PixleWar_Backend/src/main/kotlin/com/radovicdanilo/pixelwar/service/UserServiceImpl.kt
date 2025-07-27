@@ -1,12 +1,12 @@
 package com.radovicdanilo.pixelwar.service
 
+import com.radovicdanilo.pixelwar.config.security.Roles
+import com.radovicdanilo.pixelwar.config.security.service.TokenService
 import com.radovicdanilo.pixelwar.domain.User
 import com.radovicdanilo.pixelwar.dto.create.CreateUserDto
 import com.radovicdanilo.pixelwar.dto.token.TokenRequestDto
 import com.radovicdanilo.pixelwar.dto.token.TokenResponseDto
 import com.radovicdanilo.pixelwar.repository.UserRepository
-import com.radovicdanilo.pixelwar.security.Roles
-import com.radovicdanilo.pixelwar.security.service.TokenService
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
 import org.springframework.dao.DataIntegrityViolationException
@@ -37,7 +37,7 @@ class UserServiceImpl(
 
         val claims: Claims = Jwts.claims().setSubject(username).setIssuedAt(Date()).apply {
             this["role"] = Roles.USER
-            this["id"] = user.id
+            this["userId"] = user.id
         }
 
         val token = tokenService.generate(claims)

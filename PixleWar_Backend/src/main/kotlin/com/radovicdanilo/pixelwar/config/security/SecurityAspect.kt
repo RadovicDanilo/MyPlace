@@ -1,6 +1,6 @@
-package com.radovicdanilo.pixelwar.security
+package com.radovicdanilo.pixelwar.config.security
 
-import com.radovicdanilo.pixelwar.security.service.TokenService
+import com.radovicdanilo.pixelwar.config.security.service.TokenService
 import io.jsonwebtoken.Claims
 import jakarta.servlet.http.HttpServletRequest
 import org.aspectj.lang.ProceedingJoinPoint
@@ -17,7 +17,7 @@ class SecurityAspect(
     private val tokenService: TokenService, private val request: HttpServletRequest
 ) {
 
-    @Around("@annotation(com.radovicdanilo.pixelwar.security.CheckSecurity)")
+    @Around("@annotation(com.radovicdanilo.pixelwar.config.security.CheckSecurity)")
     @Throws(Throwable::class)
     fun around(joinPoint: ProceedingJoinPoint): Any? {
         val methodSignature = joinPoint.signature as MethodSignature

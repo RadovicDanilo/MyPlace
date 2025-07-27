@@ -1,9 +1,9 @@
 package com.radovicdanilo.pixelwar.controller
 
+import com.radovicdanilo.pixelwar.config.security.CheckSecurity
 import com.radovicdanilo.pixelwar.dto.create.CreateUserDto
 import com.radovicdanilo.pixelwar.dto.token.TokenRequestDto
 import com.radovicdanilo.pixelwar.dto.token.TokenResponseDto
-import com.radovicdanilo.pixelwar.security.CheckSecurity
 import com.radovicdanilo.pixelwar.service.UserService
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus

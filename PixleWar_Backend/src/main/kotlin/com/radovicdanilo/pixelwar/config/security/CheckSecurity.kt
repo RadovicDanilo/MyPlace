@@ -1,4 +1,4 @@
-package com.radovicdanilo.pixelwar.security
+package com.radovicdanilo.pixelwar.config.security
 
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.RUNTIME)

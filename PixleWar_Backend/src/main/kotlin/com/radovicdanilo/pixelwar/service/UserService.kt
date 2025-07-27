@@ -4,7 +4,6 @@ import com.radovicdanilo.pixelwar.dto.create.CreateUserDto
 import com.radovicdanilo.pixelwar.dto.token.TokenRequestDto
 import com.radovicdanilo.pixelwar.dto.token.TokenResponseDto
 import org.springframework.http.ResponseEntity
-import org.springframework.stereotype.Service
 import org.springframework.web.multipart.MultipartFile
 
 interface UserService {

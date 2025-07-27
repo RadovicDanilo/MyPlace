@@ -1,7 +1,6 @@
-package com.radovicdanilo.pixelwar.security.service
+package com.radovicdanilo.pixelwar.config.security.service
 
 import io.jsonwebtoken.Claims
-import org.springframework.stereotype.Service
 
 interface TokenService {
     fun generate(claims: Claims): String

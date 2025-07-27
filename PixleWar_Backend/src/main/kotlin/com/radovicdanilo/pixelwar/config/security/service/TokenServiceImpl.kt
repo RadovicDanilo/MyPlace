@@ -1,4 +1,4 @@
-package com.radovicdanilo.pixelwar.security.service
+package com.radovicdanilo.pixelwar.config.security.service
 
 import io.jsonwebtoken.Claims
 import io.jsonwebtoken.Jwts
@@ -30,7 +30,7 @@ class TokenServiceImpl(
     }
 
     override fun getId(token: String): Long {
-        val idClaim = parseToken(token)["id"]
+        val idClaim = parseToken(token)["userId"]
         return when (idClaim) {
             is Long -> idClaim
             is Int -> idClaim.toLong()

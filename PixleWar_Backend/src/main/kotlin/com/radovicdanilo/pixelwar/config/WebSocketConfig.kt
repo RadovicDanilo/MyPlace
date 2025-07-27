@@ -1,5 +1,6 @@
 package com.radovicdanilo.pixelwar.config
 
+import com.radovicdanilo.pixelwar.config.security.AuthHandshakeInterceptor
 import com.radovicdanilo.pixelwar.socket.PixelWebSocketHandler
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.socket.config.annotation.EnableWebSocket
@@ -9,10 +10,9 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @Configuration
 @EnableWebSocket
 class WebSocketConfig(
-    private val pixelWebSocketHandler: PixelWebSocketHandler
+    private var pixelWebSocketHandler: PixelWebSocketHandler, private var handshakeInterceptor: AuthHandshakeInterceptor
 ) : WebSocketConfigurer {
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
-        registry.addHandler(pixelWebSocketHandler, "/ws")
-            .setAllowedOrigins("*") // Allow all origins for now
+        registry.addHandler(pixelWebSocketHandler, "/ws").addInterceptors(handshakeInterceptor).setAllowedOrigins("*")
     }
 }
