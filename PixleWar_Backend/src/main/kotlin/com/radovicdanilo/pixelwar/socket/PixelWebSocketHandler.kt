@@ -1,6 +1,9 @@
 package com.radovicdanilo.pixelwar.socket
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.radovicdanilo.pixelwar.constants.CanvasConstants.CANVAS_HEIGHT
+import com.radovicdanilo.pixelwar.constants.CanvasConstants.CANVAS_WIDTH
+import com.radovicdanilo.pixelwar.constants.CanvasConstants.MAX_COLOR
 import com.radovicdanilo.pixelwar.service.CanvasService
 import com.radovicdanilo.pixelwar.service.UserCooldownService
 import org.springframework.stereotype.Component
@@ -11,9 +14,6 @@ import org.springframework.web.socket.handler.TextWebSocketHandler
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
-import com.radovicdanilo.pixelwar.constants.CanvasConstants.CANVAS_HEIGHT
-import com.radovicdanilo.pixelwar.constants.CanvasConstants.CANVAS_WIDTH
-import com.radovicdanilo.pixelwar.constants.CanvasConstants.MAX_COLOR
 
 @Component
 class PixelWebSocketHandler(
@@ -79,14 +79,18 @@ class PixelWebSocketHandler(
     }
 
     private fun broadcastMessage(message: TextMessage) {
-        activeSessions.forEach { session ->
+        val iterator = activeSessions.iterator()
+        while (iterator.hasNext()) {
+            val session = iterator.next()
             try {
                 if (session.isOpen) {
                     session.sendMessage(message)
+                } else {
+                    iterator.remove()
                 }
             } catch (e: Exception) {
-                println("Error broadcasting to ${session.id}: ${e.message}")
-                activeSessions.remove(session)
+                println("Broadcast failed for ${session.id} error: " + e.message)
+                iterator.remove()
             }
         }
     }
