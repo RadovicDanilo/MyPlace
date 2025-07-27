@@ -6,6 +6,8 @@ import com.radovicdanilo.pixelwar.constants.CanvasConstants.CANVAS_WIDTH
 import com.radovicdanilo.pixelwar.constants.CanvasConstants.MAX_COLOR
 import com.radovicdanilo.pixelwar.service.CanvasService
 import com.radovicdanilo.pixelwar.service.UserCooldownService
+import jakarta.annotation.PreDestroy
+import org.springframework.beans.factory.DisposableBean
 import org.springframework.stereotype.Component
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.TextMessage
@@ -20,7 +22,7 @@ class PixelWebSocketHandler(
     private val objectMapper: ObjectMapper,
     private val canvasService: CanvasService,
     private val userCooldownService: UserCooldownService
-) : TextWebSocketHandler() {
+) : TextWebSocketHandler(), DisposableBean {
 
     private val activeSessions = ConcurrentHashMap.newKeySet<WebSocketSession>()
     private val lock = ReentrantLock()
@@ -102,5 +104,28 @@ class PixelWebSocketHandler(
 
     private fun getAuthenticatedUserId(session: WebSocketSession): String {
         return session.attributes["userId"] as? String ?: throw IllegalStateException("Unauthenticated session")
+    }
+
+    @PreDestroy
+    override fun destroy() {
+        gracefulShutdown()
+    }
+
+    private fun gracefulShutdown() {
+        println("Initiating WebSocket graceful shutdown...")
+
+        activeSessions.forEach { session ->
+            try {
+                if (session.isOpen) {
+                    session.close(CloseStatus.SERVICE_RESTARTED)
+                }
+            } catch (e: Exception) {
+                println("Error closing session ${session.id} error: " + e.message)
+            }
+        }
+
+        activeSessions.clear()
+
+        println("WebSocket shutdown completed")
     }
 }
