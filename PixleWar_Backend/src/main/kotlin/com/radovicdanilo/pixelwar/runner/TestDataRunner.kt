@@ -1,5 +1,8 @@
 package com.radovicdanilo.pixelwar.runner
 
+import com.radovicdanilo.pixelwar.constants.CanvasConstants.CANVAS_HEIGHT
+import com.radovicdanilo.pixelwar.constants.CanvasConstants.CANVAS_WIDTH
+import com.radovicdanilo.pixelwar.constants.CanvasConstants.COLOR_BITS
 import org.springframework.boot.CommandLineRunner
 import org.springframework.data.redis.core.RedisTemplate
 import org.springframework.stereotype.Component
@@ -14,8 +17,7 @@ class TestDataRunner(
 
         if (redisTemplate.hasKey(canvasKey)) return
 
-        // 1024 * 1024 * 4 bits = 524_288 Bytes
-        val emptyCanvas = ByteArray(524_288) { 0 }
+        val emptyCanvas = ByteArray(CANVAS_HEIGHT * CANVAS_WIDTH * COLOR_BITS / 8) { 0 }
 
         redisTemplate.opsForValue().set(canvasKey, emptyCanvas)
     }

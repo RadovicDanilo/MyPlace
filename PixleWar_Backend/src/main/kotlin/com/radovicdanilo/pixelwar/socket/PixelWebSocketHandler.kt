@@ -11,6 +11,9 @@ import org.springframework.web.socket.handler.TextWebSocketHandler
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
+import com.radovicdanilo.pixelwar.constants.CanvasConstants.CANVAS_HEIGHT
+import com.radovicdanilo.pixelwar.constants.CanvasConstants.CANVAS_WIDTH
+import com.radovicdanilo.pixelwar.constants.CanvasConstants.MAX_COLOR
 
 @Component
 class PixelWebSocketHandler(
@@ -40,9 +43,9 @@ class PixelWebSocketHandler(
             val color = payload["color"].asInt()
             val userId = getAuthenticatedUserId(session)
 
-            require(x in 0 until 1024) { "x coordinate out of bounds" }
-            require(y in 0 until 512) { "y coordinate out of bounds" }
-            require(color in 0..15) { "color must be 4-bit (0-15)" }
+            require(x in 0 until CANVAS_WIDTH) { "x coordinate out of bounds" }
+            require(y in 0 until CANVAS_HEIGHT) { "y coordinate out of bounds" }
+            require(color in 0..MAX_COLOR) { "color must be 4-bit (0-15)" }
 
             if (!lock.tryLock(100, TimeUnit.MILLISECONDS)) {
                 session.sendMessage(TextMessage("""{"error":"Server busy, try again"}"""))
