@@ -24,8 +24,13 @@ class PixelWebSocketHandler(
 
     private val activeSessions = ConcurrentHashMap.newKeySet<WebSocketSession>()
     private val lock = ReentrantLock()
+    private val maxSessions = 10_000
 
     override fun afterConnectionEstablished(session: WebSocketSession) {
+        if (activeSessions.size >= maxSessions) {
+            session.close(CloseStatus.SERVICE_OVERLOAD)
+            return
+        }
         activeSessions.add(session)
         println("WebSocket connected: ${session.id}")
     }
