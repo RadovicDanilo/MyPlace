@@ -9,6 +9,7 @@ import com.radovicdanilo.pixelwar.service.UserCooldownService
 import jakarta.annotation.PreDestroy
 import org.springframework.beans.factory.DisposableBean
 import org.springframework.stereotype.Component
+import org.springframework.web.socket.BinaryMessage
 import org.springframework.web.socket.CloseStatus
 import org.springframework.web.socket.TextMessage
 import org.springframework.web.socket.WebSocketSession
@@ -35,6 +36,8 @@ class PixelWebSocketHandler(
         }
         activeSessions.add(session)
         println("WebSocket connected: ${session.id}")
+
+       session.sendMessage(BinaryMessage(canvasService.getFullCanvas()))
     }
 
     override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus) {
