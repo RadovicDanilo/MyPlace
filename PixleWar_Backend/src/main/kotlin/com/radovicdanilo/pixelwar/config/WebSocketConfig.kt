@@ -10,9 +10,12 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 @Configuration
 @EnableWebSocket
 class WebSocketConfig(
-    private var pixelWebSocketHandler: PixelWebSocketHandler, private var handshakeInterceptor: AuthHandshakeInterceptor
+    private val pixelWebSocketHandler: PixelWebSocketHandler, private val handshakeInterceptor: AuthHandshakeInterceptor
 ) : WebSocketConfigurer {
+
     override fun registerWebSocketHandlers(registry: WebSocketHandlerRegistry) {
-        registry.addHandler(pixelWebSocketHandler, "/ws").addInterceptors(handshakeInterceptor).setAllowedOrigins("*")
+        registry.addHandler(pixelWebSocketHandler, "/ws").addInterceptors(
+            handshakeInterceptor
+        ).setAllowedOrigins("*")
     }
 }

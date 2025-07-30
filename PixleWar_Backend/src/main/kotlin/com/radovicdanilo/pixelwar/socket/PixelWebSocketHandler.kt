@@ -37,7 +37,7 @@ class PixelWebSocketHandler(
         activeSessions.add(session)
         println("WebSocket connected: ${session.id}")
 
-       session.sendMessage(BinaryMessage(canvasService.getFullCanvas()))
+        session.sendMessage(BinaryMessage(canvasService.getFullCanvas()))
     }
 
     override fun afterConnectionClosed(session: WebSocketSession, status: CloseStatus) {
@@ -63,6 +63,7 @@ class PixelWebSocketHandler(
             }
             try {
                 if (!userCooldownService.canPlacePixel(userId)) {
+                    println("Cooldown active for user $userId")
                     session.sendMessage(TextMessage("""{"error":"Cooldown active"}"""))
                     return
                 }
@@ -83,7 +84,7 @@ class PixelWebSocketHandler(
                 lock.unlock()
             }
         } catch (e: Exception) {
-            println("Error processing message: ${e.message}")
+            println("Error processing message: ${e.message} cause: ${e.cause} ")
             session.sendMessage(TextMessage("""{"error":"Invalid request"}"""))
         }
     }
@@ -106,7 +107,7 @@ class PixelWebSocketHandler(
     }
 
     private fun getAuthenticatedUserId(session: WebSocketSession): String {
-        return session.attributes["userId"] as? String ?: throw IllegalStateException("Unauthenticated session")
+        return session.attributes["userId"]?.toString() ?: throw IllegalStateException("Unauthenticated session")
     }
 
     @PreDestroy

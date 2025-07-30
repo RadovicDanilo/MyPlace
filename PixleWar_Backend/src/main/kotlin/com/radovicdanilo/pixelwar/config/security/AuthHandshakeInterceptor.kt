@@ -13,25 +13,32 @@ class AuthHandshakeInterceptor(
     private val tokenService: TokenService
 ) : HandshakeInterceptor {
 
+    // Handles websocket authorization
+    // set the userId attribute which is necessary foo managing cooldowns
     override fun beforeHandshake(
         request: ServerHttpRequest,
         response: ServerHttpResponse,
         wsHandler: WebSocketHandler,
         attributes: MutableMap<String, Any>
     ): Boolean {
-        val token = request.headers.getFirst("Authorization")?.substringAfter("Bearer ")
+        val protocols = request.headers["Sec-WebSocket-Protocol"]?.firstOrNull()
+        val token = protocols?.split(", ")?.getOrNull(1)
+
         if (token == null) {
             response.setStatusCode(HttpStatus.UNAUTHORIZED)
             return false
         }
+
         try {
-            attributes["userId"] = tokenService.getId(token)
+            val userId = tokenService.getId(token)
+            attributes.put("userId", userId)
+
+            response.headers["Sec-WebSocket-Protocol"] = protocols.split(", ").first()
             return true
-        } catch (e: Exception) {
-            println(e.message)
+        } catch (_: Exception) {
+            response.setStatusCode(HttpStatus.UNAUTHORIZED)
+            return false
         }
-        response.setStatusCode(HttpStatus.UNAUTHORIZED)
-        return false
     }
 
     override fun afterHandshake(

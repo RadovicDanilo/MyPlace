@@ -27,6 +27,8 @@ class CanvasService(
                 .valueAt(offset.toLong()).to(color.toLong())
             conn.stringCommands().bitField(keyBytes, cmd)
         }
+
+        println("Pixel set: $x $y $color")
     }
 
 }
