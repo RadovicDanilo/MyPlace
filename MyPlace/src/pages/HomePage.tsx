@@ -220,9 +220,9 @@ function HomePage() {
     };
 
     return (
-        <div className="flex h-[calc(100vh-64px)] w-full bg-gray-100">
+        <div className="flex h-max w-full bg-gray-100">
             {/* Left sidebar - Color Palette */}
-            <div className="w-16 bg-white shadow-md p-2 flex flex-col items-center">
+            <div className="w-16 h-min bg-white shadow-md p-2 flex flex-col items-center">
                 <div className="grid grid-cols-1 gap-2">
                     {PALETTE_RGB.map((color, index) => (
                         <button
@@ -246,6 +246,7 @@ function HomePage() {
                 <div
                     className="w-full h-full flex items-center justify-center overflow-hidden"
                     onWheel={handleWheel}
+                    style={{ touchAction: 'none' }}
                 >
                     <div
                         className="relative"
@@ -263,7 +264,7 @@ function HomePage() {
                             onClick={handleClick}
                             style={{
                                 imageRendering: 'pixelated',
-                                maxWidth: 'none' // Prevent canvas from being constrained
+                                maxWidth: 'none'
                             }}
                         />
                     </div>
