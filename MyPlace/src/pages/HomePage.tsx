@@ -6,23 +6,24 @@ const CANVAS_WIDTH = 1024;
 const CANVAS_HEIGHT = 1024;
 const WS_URL = "ws://localhost:8081/api/ws";
 
+// 16-color palette in ABGR format
 const PALETTE_ABGR: number[] = [
-    0xff000000, // Black 
-    0xffffffff, // White
-    0xff0000ff, // Red
-    0xff00ff00, // Green
-    0xffff0000, // Blue
-    0xff00ffff, // Yellow
-    0xffffff00, // Cyan
-    0xffff00ff, // Magenta
-    0xff888888, // Gray
-    0xff0088ff, // Orange
-    0xffff8800, // Light Blue
-    0xff8800ff, // Purple
-    0xff44ff44, // Light Green
-    0xff4444ff, // Light Blue
-    0xffff4444, // Light Red
-    0xff222222, // Dark Gray
+    0xFF000000, // Black
+    0xFFFFFFFF, // White
+    0xFFFF0000, // Blue
+    0xFF00FF00, // Green
+    0xFF0000FF, // Red
+    0xFFFFFF00, // Yellow
+    0xFF00FFFF, // Cyan
+    0xFFFF00FF, // Magenta
+    0xFF888888, // Gray
+    0xFF444444, // Dark Gray
+    0xFFB5651D, // Brown
+    0xFFFFA500, // Orange
+    0xFF00AEEF, // Sky Blue
+    0xFF8F00FF, // Violet
+    0xFF00FF88, // Mint
+    0xFFFFC0CB, // Pink
 ];
 
 function abgrToRgbaStrings(abgrArray: number[]): string[] {
