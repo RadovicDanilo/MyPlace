@@ -43,6 +43,7 @@ function HomePage() {
 
     const wsRef = useRef<WebSocket | null>(null);
     const canvasRef = useRef<HTMLCanvasElement>(null);
+    const wrapperRef = useRef<HTMLDivElement>(null);
     const pixelsRef = useRef<Uint32Array | null>(null);
     const frameRef = useRef<number>(0);
     const pendingUpdatesRef = useRef<{ x: number, y: number, color: number }[]>([]);
@@ -153,124 +154,119 @@ function HomePage() {
         };
     }, [username, token, navigate, initPixelBuffer, renderUpdates, processBinaryData, handlePixelUpdate]);
 
-    // Zoom handling with proper centering
-    const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
+    // zoom via mouse wheel
+    const handleWheel = useCallback((e: React.WheelEvent) => {
         e.preventDefault();
-        const container = e.currentTarget;
-        const rect = container.getBoundingClientRect();
+        if (!wrapperRef.current) return;
 
-        // Get mouse position relative to container center
-        const containerCenterX = rect.width / 2;
-        const containerCenterY = rect.height / 2;
-        const mouseX = e.clientX - rect.left;
-        const mouseY = e.clientY - rect.top;
+        const { left, top } = wrapperRef.current.getBoundingClientRect();
+        const mx = e.clientX - left;
+        const my = e.clientY - top;
 
-        // Calculate mouse offset from center
-        const offsetX = mouseX - containerCenterX;
-        const offsetY = mouseY - containerCenterY;
+        const deltaScale = e.deltaY < 0 ? 1.1 : 1 / 1.1;
+        const newScale = Math.min(10, Math.max(1, scale * deltaScale));
 
-        // Calculate new scale
-        const delta = e.deltaY;
-        const newScale = delta < 0
-            ? Math.min(10, scale * 1.1)
-            : Math.max(0.5, scale / 1.1);
-
-        // Adjust position to zoom toward mouse
-        setPosition(prev => ({
-            x: prev.x - (offsetX * (newScale - scale) / scale),
-            y: prev.y - (offsetY * (newScale - scale) / scale)
+        // move pos so that (mx,my) remains under the cursor
+        setPosition(({ x, y }) => ({
+            x: x - (mx / scale) * (newScale - scale),
+            y: y - (my / scale) * (newScale - scale),
         }));
         setScale(newScale);
-    };
-
-    // WASD movement
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            const moveAmount = 50 / scale; // More precise movement when zoomed in
-            switch (e.key.toLowerCase()) {
-                case 'w': setPosition(prev => ({ ...prev, y: prev.y + moveAmount })); break;
-                case 'a': setPosition(prev => ({ ...prev, x: prev.x + moveAmount })); break;
-                case 's': setPosition(prev => ({ ...prev, y: prev.y - moveAmount })); break;
-                case 'd': setPosition(prev => ({ ...prev, x: prev.x - moveAmount })); break;
-            }
-        };
-
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
     }, [scale]);
 
-    // Canvas click handling with proper coordinate calculation
-    const handleClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-        if (!canvasRef.current || !wsRef.current) return;
+    // WASD pan 
+    useEffect(() => {
+        const onKey = (e: KeyboardEvent) => {
+            const step = 50 / scale;
+            setPosition(p => {
+                switch (e.key.toLowerCase()) {
+                    case "w": return { x: p.x, y: p.y + step };
+                    case "s": return { x: p.x, y: p.y - step };
+                    case "a": return { x: p.x + step, y: p.y };
+                    case "d": return { x: p.x - step, y: p.y };
+                    default: return p;
+                }
+            });
+        };
+        window.addEventListener("keydown", onKey);
+        return () => window.removeEventListener("keydown", onKey);
+    }, [scale]);
 
-        const canvas = canvasRef.current;
-        const rect = canvas.getBoundingClientRect();
+    const handleClick = useCallback((e: React.MouseEvent) => {
+        if (!canvasRef.current || !wrapperRef.current || !wsRef.current) return;
 
-        // Calculate canvas coordinates considering zoom and pan
-        const x = Math.floor(
-            (e.clientX - rect.left - position.x - (rect.width / 2 - (CANVAS_WIDTH * scale) / 2)) / scale
-        );
-        const y = Math.floor(
-            (e.clientY - rect.top - position.y - (rect.height / 2 - (CANVAS_HEIGHT * scale) / 2)) / scale
-        );
+        const rect = wrapperRef.current.getBoundingClientRect();
+        const mx = e.clientX - rect.left;
+        const my = e.clientY - rect.top;
 
+        // inverse of transform-origin 0,0 [ translate(tx,ty) scale(s) ]
+        const s = scale;
+        const tx = position.x;
+        const ty = position.y;
+
+        const x = Math.floor((mx - tx) / s + position.x / scale);
+        const y = Math.floor((my - ty) / s + position.y / scale);
+
+        console.log(`${x}, ${y}`);
         if (x >= 0 && x < CANVAS_WIDTH && y >= 0 && y < CANVAS_HEIGHT) {
             wsRef.current.send(JSON.stringify({ x, y, color: selectedColor }));
         }
-    };
+    }, [position.x, position.y, scale, selectedColor]);
 
     return (
-        <div className="flex h-max w-full bg-gray-100">
-            {/* Left sidebar - Color Palette */}
-            <div className="w-16 h-min bg-white shadow-md p-2 flex flex-col items-center">
-                <div className="grid grid-cols-1 gap-2">
-                    {PALETTE_RGB.map((color, index) => (
-                        <button
-                            key={index}
-                            className={`
-                                w-10 h-10 rounded border-2 transition-all
-                                ${selectedColor === index
-                                    ? 'border-blue-500 scale-110'
-                                    : 'border-gray-300 hover:border-blue-300'}
-                            `}
-                            style={{ backgroundColor: color }}
-                            onClick={() => setSelectedColor(index)}
-                            title={`Color ${index}`}
-                        />
-                    ))}
-                </div>
-            </div>
+        <>
+            <p>
+                X: {position.x}
 
-            {/* Main Canvas Area */}
-            <div className="flex-1 relative overflow-hidden">
-                <div
-                    className="w-full h-full flex items-center justify-center overflow-hidden"
-                    onWheel={handleWheel}
-                    style={{ touchAction: 'none' }}
-                >
+            </p>
+            <p>
+                Y: {position.y}
+            </p>
+            <p>
+                Scale: {scale}
+            </p>
+            <div className="flex h-screen w-screen bg-gray-100">
+                {/* Left sidebar - Color Palette */}
+                <div className="w-16 h-min bg-white shadow-md p-2 flex flex-col items-center">
+                    <div className="grid grid-cols-1 gap-2">
+                        {PALETTE_RGB.map((color, index) => (
+                            <button
+                                key={index}
+                                className={`w-10 h-10 rounded border-2 transition-all ${selectedColor === index
+                                    ? 'border-blue-500 scale-110'
+                                    : 'border-gray-300 hover:border-blue-300'
+                                    }`}
+                                style={{ backgroundColor: color }}
+                                onClick={() => setSelectedColor(index)}
+                                title={`Color ${index}`}
+                            />
+                        ))}
+                    </div>
+                </div>
+
+                <div className="flex-1 relative overflow-hidden">
                     <div
-                        className="relative"
+                        ref={wrapperRef}
+                        className="absolute top-0 left-0"
+                        onWheel={handleWheel}
                         style={{
-                            transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
-                            transformOrigin: 'center center',
-                            willChange: 'transform'
+                            transformOrigin: "0 0",
+                            transform: `translate(${position.x}px,${position.y}px) scale(${scale})`,
+                            willChange: "transform",
                         }}
                     >
                         <canvas
                             ref={canvasRef}
                             width={CANVAS_WIDTH}
                             height={CANVAS_HEIGHT}
-                            className="block bg-white shadow-lg"
                             onClick={handleClick}
-                            style={{
-                                imageRendering: 'pixelated',
-                                maxWidth: 'none'
-                            }}
+                            className="block bg-white"
+                            style={{ imageRendering: "pixelated" }}
                         />
                     </div>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
 
