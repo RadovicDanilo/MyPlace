@@ -9,31 +9,30 @@ function App() {
   const logout = useAuthStore((state) => state.logout);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      <header className="bg-blue-600 shadow">
-        <nav className="container mx-auto flex items-center justify-between px-4 py-3">
-          <div className="flex items-center space-x-4">
-            <RouterLink
-              to="/"
-              className="text-white text-xl font-bold no-underline hover:underline"
-            >
-              Pixel War
-            </RouterLink>
-          </div>
-          <div className="flex items-center space-x-4">
+    <div className="min-h-screen bg-gray-100 text-gray-900">
+      <header className="bg-blue-600 shadow-md">
+        <nav className="max-w-7xl mx-auto flex items-center justify-between px-6 py-4">
+          <RouterLink
+            to="/"
+            className="text-white text-2xl font-semibold tracking-wide hover:underline"
+          >
+            Pixel War
+          </RouterLink>
+
+          <div className="flex items-center space-x-6">
             {!username ? (
               <RouterLink
                 to="/auth"
-                className="text-white hover:bg-blue-700 px-4 py-2 rounded transition"
+                className="bg-white text-blue-600 font-medium px-4 py-2 rounded hover:bg-blue-50 transition"
               >
-                Login/Register
+                Login / Register
               </RouterLink>
             ) : (
               <>
-                <span className="text-white">{username}</span>
+                <span className="text-white font-medium">{username}</span>
                 <button
                   onClick={logout}
-                  className="text-white hover:bg-blue-700 px-4 py-2 rounded transition"
+                  className="bg-white text-blue-600 font-medium px-4 py-2 rounded hover:bg-blue-50 transition"
                 >
                   Logout
                 </button>
@@ -43,7 +42,7 @@ function App() {
         </nav>
       </header>
 
-      <main className="container mx-auto px-4 py-6">
+      <main className="max-w-7xl w-full p-6">
         <Routes>
           <Route path="/" element={<HomePage />} />
           <Route path="/auth" element={<AuthForm />} />
@@ -51,6 +50,7 @@ function App() {
       </main>
     </div>
   );
+
 }
 
 export default App;

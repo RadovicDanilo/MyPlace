@@ -52,7 +52,7 @@ function HomePage() {
     // UI State
     const [scale, setScale] = useState<number>(1);
     const [position, setPosition] = useState({ x: 0, y: 0 });
-    const [selectedColor, setSelectedColor] = useState<number>(6);
+    const [selectedColor, setSelectedColor] = useState<number>(4);
 
     // Initialize pixel buffer
     const initPixelBuffer = useCallback(() => {
@@ -222,16 +222,16 @@ function HomePage() {
 
     return (
         <>
-            <div className="flex h-screen w-screen bg-gray-100 overflow-hidden">
+            <div className="relative w-screen h-screen bg-gray-100 overflow-hidden">
                 {/* Left sidebar - Color Palette */}
-                <div className="w-16 h-min bg-white shadow-md p-2 flex flex-col items-center">
+                <div className="absolute top-0 left-0 z-10 w-16 h-min shadow-2x1 bg-white p-2 flex flex-col items-center">
                     <div className="grid grid-cols-1 gap-2">
                         {PALETTE_RGB.map((color, index) => (
                             <button
                                 key={index}
                                 className={`w-10 h-10 rounded border-2 transition-all ${selectedColor === index
-                                    ? 'border-blue-500 scale-110'
-                                    : 'border-gray-300 hover:border-blue-300'
+                                    ? "border-blue-500 scale-110"
+                                    : "border-gray-300 hover:border-blue-300"
                                     }`}
                                 style={{ backgroundColor: color }}
                                 onClick={() => setSelectedColor(index)}
@@ -241,16 +241,16 @@ function HomePage() {
                     </div>
                 </div>
 
-                <div className="flex-1 relative overflow-hidden">
+                {/* Canvas wrapper centered on screen */}
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ">
                     <div
                         ref={wrapperRef}
-                        className="absolute top-0 left-0"
                         onWheel={handleWheel}
                         style={{
                             transformOrigin: "0 0",
                             transform: `translate(${position.x}px,${position.y}px) scale(${scale})`,
                             willChange: "transform",
-                            touchAction: 'none'
+                            touchAction: "none",
                         }}
                     >
                         <canvas
@@ -258,6 +258,7 @@ function HomePage() {
                             width={CANVAS_WIDTH}
                             height={CANVAS_HEIGHT}
                             onClick={handleClick}
+                            className="block bg-white"
                             style={{ imageRendering: "pixelated" }}
                         />
                     </div>
@@ -265,6 +266,7 @@ function HomePage() {
             </div>
         </>
     );
+
 }
 
 export default HomePage;
