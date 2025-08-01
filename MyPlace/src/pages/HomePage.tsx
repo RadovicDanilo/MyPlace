@@ -158,14 +158,19 @@ function HomePage() {
     // zoom via mouse wheel
     const handleWheel = useCallback((e: React.WheelEvent) => {
         e.preventDefault();
+        e.stopPropagation();
+
         if (!wrapperRef.current) return;
+
+        const MAX_ZOOM = 10;
+        const MIN_ZOOM = 0.75;
 
         const { left, top } = wrapperRef.current.getBoundingClientRect();
         const mx = e.clientX - left;
         const my = e.clientY - top;
 
         const deltaScale = e.deltaY < 0 ? 1.1 : 1 / 1.1;
-        const newScale = Math.min(10, Math.max(1, scale * deltaScale));
+        const newScale = Math.min(MAX_ZOOM, Math.max(MIN_ZOOM, scale * deltaScale));
 
         // move pos so that (mx,my) remains under the cursor
         setPosition(({ x, y }) => ({
@@ -176,6 +181,7 @@ function HomePage() {
     }, [scale]);
 
     // WASD pan 
+    // TODO: Limit this with dinamic max/min values based on scale
     useEffect(() => {
         const onKey = (e: KeyboardEvent) => {
             const step = 50 / scale;
@@ -216,17 +222,7 @@ function HomePage() {
 
     return (
         <>
-            <p>
-                X: {position.x}
-
-            </p>
-            <p>
-                Y: {position.y}
-            </p>
-            <p>
-                Scale: {scale}
-            </p>
-            <div className="flex h-screen w-screen bg-gray-100">
+            <div className="flex h-screen w-screen bg-gray-100 overflow-hidden">
                 {/* Left sidebar - Color Palette */}
                 <div className="w-16 h-min bg-white shadow-md p-2 flex flex-col items-center">
                     <div className="grid grid-cols-1 gap-2">
@@ -254,6 +250,7 @@ function HomePage() {
                             transformOrigin: "0 0",
                             transform: `translate(${position.x}px,${position.y}px) scale(${scale})`,
                             willChange: "transform",
+                            touchAction: 'none'
                         }}
                     >
                         <canvas
@@ -261,7 +258,6 @@ function HomePage() {
                             width={CANVAS_WIDTH}
                             height={CANVAS_HEIGHT}
                             onClick={handleClick}
-                            className="block bg-white"
                             style={{ imageRendering: "pixelated" }}
                         />
                     </div>
