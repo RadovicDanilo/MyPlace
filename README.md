@@ -1,6 +1,6 @@
 # MyPlace
 
-A real-time collaborative pixel canvas inspired by [Reddit's r/Place](https://redditinc.com/blog/how-we-built-rplace).
+A real-time collaborative pixel canvas inspired by Reddit's r/Place
 
 ---
 
