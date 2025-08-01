@@ -15,12 +15,7 @@ export const useAuthStore = create<AuthStore>()((set) => ({
     token: localStorage.getItem("token") || "",
 
     register: async (register) => {
-        const res = await axios.post(`/user/register`, register);
-
-        localStorage.setItem("username", register.username);
-        localStorage.setItem("token", res.data.token);
-
-        set({ username: res.data.user.username, token: res.data.token })
+        await axios.post(`/user/register`, register);
     },
 
     login: async (login) => {
@@ -29,7 +24,7 @@ export const useAuthStore = create<AuthStore>()((set) => ({
         localStorage.setItem("username", login.username);
         localStorage.setItem("token", res.data.token);
 
-        set({ username: res.data.user.username, token: res.data.token })
+        set({ username: login.username, token: res.data.token })
     },
 
     logout: async () => {

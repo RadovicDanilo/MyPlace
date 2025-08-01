@@ -87,7 +87,7 @@ function HomePage() {
         frameRef.current = requestAnimationFrame(renderUpdates);
     }, []);
 
-    // Process binary data
+    // Process the raw inital canvas state 
     const processBinaryData = useCallback((data: ArrayBuffer) => {
         if (!canvasRef.current) return;
         const ctx = canvasRef.current.getContext('2d');
@@ -108,7 +108,6 @@ function HomePage() {
         pixelsRef.current = pixels;
     }, []);
 
-    // Handle pixel updates
     const handlePixelUpdate = useCallback((x: number, y: number, color: number) => {
         pendingUpdatesRef.current.push({ x, y, color });
     }, []);
@@ -154,6 +153,8 @@ function HomePage() {
             }
         };
     }, [username, token, navigate, initPixelBuffer, renderUpdates, processBinaryData, handlePixelUpdate]);
+
+    // === CANVAS MANIPULATION LOGIC === 
 
     // zoom via mouse wheel
     const handleWheel = useCallback((e: React.WheelEvent) => {
