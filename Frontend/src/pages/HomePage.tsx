@@ -35,7 +35,7 @@ function abgrToRgbaStrings(abgrArray: number[]): string[] {
     });
 }
 
-const PALETTE_RGB = abgrToRgbaStrings(PALETTE_ABGR);
+const PALETTE_RGBA = abgrToRgbaStrings(PALETTE_ABGR);
 
 function HomePage() {
     const navigate = useNavigate();
@@ -207,15 +207,9 @@ function HomePage() {
         const mx = e.clientX - rect.left;
         const my = e.clientY - rect.top;
 
-        // inverse of transform-origin 0,0 [ translate(tx,ty) scale(s) ]
-        const s = scale;
-        const tx = position.x;
-        const ty = position.y;
+        const x = mx / scale
+        const y = my / scale
 
-        const x = Math.floor((mx - tx) / s + position.x / scale);
-        const y = Math.floor((my - ty) / s + position.y / scale);
-
-        console.log(`${x}, ${y}`);
         if (x >= 0 && x < CANVAS_WIDTH && y >= 0 && y < CANVAS_HEIGHT) {
             wsRef.current.send(JSON.stringify({ x, y, color: selectedColor }));
         }
@@ -227,7 +221,7 @@ function HomePage() {
                 {/* Left sidebar - Color Palette */}
                 <div className="absolute top-0 left-0 z-10 w-16 h-min shadow-2x1 bg-white p-2 flex flex-col items-center">
                     <div className="grid grid-cols-1 gap-2">
-                        {PALETTE_RGB.map((color, index) => (
+                        {PALETTE_RGBA.map((color, index) => (
                             <button
                                 key={index}
                                 className={`w-10 h-10 rounded border-2 transition-all ${selectedColor === index
