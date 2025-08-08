@@ -24,13 +24,13 @@ class UserServiceImplTest {
 
     private lateinit var userRepository: UserRepository
     private lateinit var tokenService: TokenService
-    private lateinit var service: UserServiceImpl
+    private lateinit var service: UserService
 
     @BeforeEach
     fun setup() {
         userRepository = mock()
         tokenService = mock()
-        service = UserServiceImpl(tokenService, userRepository)
+        service = UserService(tokenService, userRepository)
     }
 
     // region: register

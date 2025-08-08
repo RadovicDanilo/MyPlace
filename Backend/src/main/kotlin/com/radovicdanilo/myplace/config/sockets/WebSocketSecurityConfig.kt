@@ -1,4 +1,4 @@
-package com.radovicdanilo.myplace.config.security
+package com.radovicdanilo.myplace.config.sockets
 
 import com.radovicdanilo.myplace.config.security.service.TokenService
 import org.springframework.context.annotation.Configuration

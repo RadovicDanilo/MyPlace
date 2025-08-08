@@ -36,17 +36,23 @@ class UserController(
         }
     }
 
+    // blocked endpoints
+
     @CheckSecurity
     @PostMapping("/pfp")
     fun addPfp(
         @RequestParam("file") file: MultipartFile, @RequestHeader("Authorization") authHeader: String
     ): ResponseEntity<Void> {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+
         val result = userService.saveProfilePicture(file, authHeader)
         return if (result) ResponseEntity.ok().build() else ResponseEntity.badRequest().build()
     }
 
     @GetMapping("/pfp/{id}")
     fun getPfp(@PathVariable id: Long): ResponseEntity<ByteArray> {
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).build()
+
         val image = userService.loadProfilePicture(id)
         return image ?: ResponseEntity.notFound().build()
     }

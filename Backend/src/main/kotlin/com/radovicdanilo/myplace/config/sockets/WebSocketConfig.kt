@@ -1,6 +1,5 @@
-package com.radovicdanilo.myplace.config
+package com.radovicdanilo.myplace.config.sockets
 
-import com.radovicdanilo.myplace.config.security.AuthHandshakeInterceptor
 import com.radovicdanilo.myplace.socket.PixelWebSocketHandler
 import org.springframework.context.annotation.Configuration
 import org.springframework.web.socket.config.annotation.EnableWebSocket

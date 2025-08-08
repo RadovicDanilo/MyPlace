@@ -1,4 +1,4 @@
-package com.radovicdanilo.myplace.config.security
+package com.radovicdanilo.myplace.config.sockets
 
 import com.radovicdanilo.myplace.config.security.service.TokenService
 import org.springframework.http.HttpStatus
@@ -14,6 +14,7 @@ class AuthHandshakeInterceptor(
 ) : HandshakeInterceptor {
 
     // Handles websocket authorization
+    // We are using protocols to "smuggle" in the jwt token since Authorization headers aren't allowed in ws
     // set the userId attribute which is necessary foo managing cooldowns
     override fun beforeHandshake(
         request: ServerHttpRequest,

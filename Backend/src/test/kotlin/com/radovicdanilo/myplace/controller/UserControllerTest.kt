@@ -3,7 +3,6 @@ package com.radovicdanilo.myplace.controller
 import com.radovicdanilo.myplace.dto.create.CreateUserDto
 import com.radovicdanilo.myplace.dto.token.TokenRequestDto
 import com.radovicdanilo.myplace.dto.token.TokenResponseDto
-import com.radovicdanilo.myplace.service.UserService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.mockito.Mockito.mock
