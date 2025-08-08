@@ -1,7 +1,7 @@
 import { Route, Routes, Link as RouterLink, useLocation } from "react-router-dom";
 import { useAuthStore } from "./api/authStore";
 import HomePage from "./pages/HomePage";
-import AuthForm from "./pages/auth/AuthForm";
+import AuthPage from "./pages/AuthPage";
 import "./index.css"
 
 function App() {
@@ -51,7 +51,7 @@ function App() {
       <main className="flex-1">
         <Routes>
           <Route path="/" element={<HomePage />} />
-          <Route path="/auth" element={<AuthForm />} />
+          <Route path="/auth" element={<AuthPage />} />
         </Routes>
       </main>
 

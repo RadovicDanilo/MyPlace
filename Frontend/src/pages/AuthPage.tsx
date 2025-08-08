@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
-import { useAuthStore } from "../../api/authStore";
+import { useAuthStore } from "../api/authStore";
 import { useNavigate } from "react-router-dom";
 
-const AuthForm = () => {
+const AuthPage = () => {
   const [isLogin, setIsLogin] = useState(true);
   const [form, setForm] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
@@ -120,4 +120,4 @@ const AuthForm = () => {
   );
 };
 
-export default AuthForm;
+export default AuthPage;

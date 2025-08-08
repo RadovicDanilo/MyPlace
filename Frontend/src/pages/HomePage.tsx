@@ -54,6 +54,8 @@ function HomePage() {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [selectedColor, setSelectedColor] = useState<number>(4);
 
+    const [visible, setVisible] = useState(true);
+
     // Initialize pixel buffer
     const initPixelBuffer = useCallback(() => {
         if (!canvasRef.current) return;
@@ -236,29 +238,52 @@ function HomePage() {
                     </div>
                 </div>
 
-                {/* Canvas wrapper centered on screen */}
-                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ">
-                    <div
-                        ref={wrapperRef}
-                        onWheel={handleWheel}
-                        style={{
-                            transformOrigin: "0 0",
-                            transform: `translate(${position.x}px,${position.y}px) scale(${scale})`,
-                            willChange: "transform",
-                            touchAction: "none",
-                        }}
-                    >
-                        <canvas
-                            ref={canvasRef}
-                            width={CANVAS_WIDTH}
-                            height={CANVAS_HEIGHT}
-                            onClick={handleClick}
-                            className="block bg-white"
-                            style={{ imageRendering: "pixelated" }}
-                        />
+                <div className="absolute w-screen h-screen bg-gray-100">
+                    {visible && (
+                        <div className="flex justify-center">
+                            <div className="relative flex flex-col items-center justify-center w-fit text-center p-4 bg-gray-100 rounded-lg shadow-md">
+                                <button
+                                    onClick={() => setVisible(false)}
+                                    className="absolute top-2 right-2 text-gray-500 hover:text-gray-800"
+                                >
+                                    ✕
+                                </button>
+
+                                <p className="font-semibold text-lg mb-2">Controls</p>
+                                <p className="text-gray-700">
+                                    Zoom: <span className="font-medium">Mouse Wheel</span>
+                                </p>
+                                <p className="text-gray-700">
+                                    Movement: <span className="font-medium">W A S D keys</span>
+                                </p>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Canvas wrapper centered on screen */}
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ">
+                        <div
+                            ref={wrapperRef}
+                            onWheel={handleWheel}
+                            style={{
+                                transformOrigin: "0 0",
+                                transform: `translate(${position.x}px,${position.y}px) scale(${scale})`,
+                                willChange: "transform",
+                                touchAction: "none",
+                            }}
+                        >
+                            <canvas
+                                ref={canvasRef}
+                                width={CANVAS_WIDTH}
+                                height={CANVAS_HEIGHT}
+                                onClick={handleClick}
+                                className="block bg-white"
+                                style={{ imageRendering: "pixelated" }}
+                            />
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div >
         </>
     );
 
