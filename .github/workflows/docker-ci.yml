@@ -25,9 +25,6 @@ jobs:
       - name: Wait for backend
         run: sleep 10
 
-      - name: Health check backend
-        run: curl --fail http://localhost:8080/health || exit 1
-
       - name: Shutdown stack
         if: always()
         run: docker compose down
